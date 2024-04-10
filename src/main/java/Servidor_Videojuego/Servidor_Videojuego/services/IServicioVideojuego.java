@@ -1,5 +1,13 @@
 package Servidor_Videojuego.Servidor_Videojuego.services;
 
-public interface IServicioVideojuego {
+import Servidor_Videojuego.Servidor_Videojuego.model.Videojuego;
 
+public interface IServicioVideojuego {
+    public Videojuego getVideojuego();
+
+    public Videojuego setVideojuego (Videojuego videojuego);
+
+    public Videojuego updateVideojuego (Videojuego videojuego, int id);
+
+    Videojuego buscarVideojuegoPorCriterios(int id, String nombre, double precio);
 }
