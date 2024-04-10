@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 public class ServicioVideojuego implements IServicioVideojuego{
     private Videojuego videojuego;
+
     @Override
     public Videojuego getVideojuego() {
         return videojuego;
@@ -21,7 +22,7 @@ public class ServicioVideojuego implements IServicioVideojuego{
     }
 
     @Override
-    public Videojuego updateVideojuego(Videojuego infraccion, int id) {
+    public Videojuego updateVideojuego(Videojuego videojuego, int id) {
 
         if (id == this.videojuego.getId()) {
             this.videojuego = videojuego;

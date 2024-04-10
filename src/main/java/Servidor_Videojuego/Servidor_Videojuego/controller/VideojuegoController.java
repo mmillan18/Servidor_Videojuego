@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/videojuego")
 
 public class VideojuegoController {
+
     private static int valCodigo = 0;
+
     @Autowired
     private IServicioVideojuego servicioVideojuego;
 
