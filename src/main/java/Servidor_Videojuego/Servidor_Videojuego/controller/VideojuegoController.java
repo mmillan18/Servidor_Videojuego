@@ -30,6 +30,8 @@ public class VideojuegoController {
     public String healthCheck(){
         return "Service status fine!";
     }
+
+
     @GetMapping
     public ResponseEntity<Videojuego> getVideojuego(){
 
@@ -61,11 +63,11 @@ public class VideojuegoController {
         if (result.hasErrors()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, this.formatMessage(result));
         }
-
         Videojuego resVideojuego= servicioVideojuego.updateVideojuego(videojuego, id);
 
         return ResponseEntity.status(HttpStatus.FOUND).body(videojuego);
     }
+
 
     private String formatMessage(BindingResult result){
         List<Map<String,String>> errores = result.getFieldErrors().stream()
