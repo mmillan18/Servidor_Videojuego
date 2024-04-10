@@ -9,5 +9,4 @@ public interface IServicioVideojuego {
 
     public Videojuego updateVideojuego (Videojuego videojuego, int id);
 
-    Videojuego buscarVideojuegoPorCriterios(int id, String nombre, double precio);
 }
