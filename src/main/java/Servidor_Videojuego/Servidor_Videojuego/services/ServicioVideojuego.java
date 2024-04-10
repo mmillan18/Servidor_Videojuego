@@ -1,6 +1,11 @@
 package Servidor_Videojuego.Servidor_Videojuego.services;
 
 import Servidor_Videojuego.Servidor_Videojuego.model.Videojuego;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
 
 public class ServicioVideojuego implements IServicioVideojuego{
     private Videojuego videojuego;
