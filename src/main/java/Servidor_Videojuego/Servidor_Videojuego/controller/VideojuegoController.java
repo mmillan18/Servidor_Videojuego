@@ -51,10 +51,6 @@ public class VideojuegoController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, this.formatMessage(result));
         }
 
-        if(videojuego.getId() == 111) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error 111");
-
-        }
         servicioVideojuego.setVideojuego(videojuego);
         return ResponseEntity.status(HttpStatus.CREATED).body(videojuego);
     }
