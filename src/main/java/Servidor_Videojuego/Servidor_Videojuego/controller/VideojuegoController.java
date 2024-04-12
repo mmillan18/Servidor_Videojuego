@@ -70,6 +70,21 @@ public class VideojuegoController {
         return ResponseEntity.status(HttpStatus.FOUND).body(videojuego);
     }
 
+    //////ELIMINAR
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteVideojuego(@PathVariable("id") int id) {
+        boolean deleted = servicioVideojuego.deleteVideojuego(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
+
 
     private String formatMessage(BindingResult result){
         List<Map<String,String>> errores = result.getFieldErrors().stream()

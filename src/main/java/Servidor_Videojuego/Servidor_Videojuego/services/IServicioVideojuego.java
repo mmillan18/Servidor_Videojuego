@@ -9,4 +9,5 @@ public interface IServicioVideojuego {
 
     public Videojuego updateVideojuego (Videojuego videojuego, int id);
 
+    public boolean deleteVideojuego(int id);
 }

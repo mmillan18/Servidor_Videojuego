@@ -29,4 +29,16 @@ public class ServicioVideojuego implements IServicioVideojuego{
         }
         return videojuego;
     }
+
+    @Override
+    public boolean deleteVideojuego(int id) {
+        if (this.videojuego != null && id == this.videojuego.getId()) {
+            this.videojuego = null;
+            return true;
+        }
+        return false;
+    }
+
+
+
 }
