@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,7 +34,7 @@ public class VideojuegoController {
         return "Service status fine!";
     }
 
-
+// Leer
     @GetMapping
     public ResponseEntity<Videojuego> getVideojuego(){
 
@@ -78,9 +79,20 @@ public class VideojuegoController {
         }
     }
 
+    //Buscar por 3 Variantes
 
+    @GetMapping("/buscar")
+    public ResponseEntity<Videojuego> buscarVideojuego(
+            @RequestParam(value = "id", required = false) Integer id,
+            @RequestParam(value = "nombre", required = false) String nombre,
+            @RequestParam(value = "precio", required = false) Double precio) {
 
+        Optional<Videojuego> resultado = servicioVideojuego.buscarVideojuegos(id, nombre, precio);
 
+        return resultado
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     private String formatMessage(BindingResult result){
         List<Map<String,String>> errores = result.getFieldErrors().stream()

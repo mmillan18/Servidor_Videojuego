@@ -50,13 +50,10 @@ public class ServicioVideojuego implements IServicioVideojuego{
     @Override
     public Optional<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio) {
         return videojuegos.stream()
-                .filter(videojuego -> (id == null || videojuego.getId() == id))
-                .filter(videojuego -> (nombre == null || videojuego.getNombre().equalsIgnoreCase(nombre)))
-                .filter(videojuego -> (precio == null || videojuego.getPrecio() == precio))
+                .filter(videojuego ->
+                        (id == null || videojuego.getId() == id) &&
+                                (nombre == null || videojuego.getNombre().equalsIgnoreCase(nombre)) &&
+                                (precio == null || videojuego.getPrecio() == precio))
                 .findFirst();
     }
-
-
-
-
 }
