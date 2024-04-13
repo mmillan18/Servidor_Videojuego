@@ -4,11 +4,17 @@ import Servidor_Videojuego.Servidor_Videojuego.model.Videojuego;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 
 public class ServicioVideojuego implements IServicioVideojuego{
     private Videojuego videojuego;
+
+    private List<Videojuego> videojuegos = new ArrayList<>();
 
     @Override
     public Videojuego getVideojuego() {
@@ -17,8 +23,9 @@ public class ServicioVideojuego implements IServicioVideojuego{
 
     @Override
     public Videojuego setVideojuego(Videojuego videojuego) {
-        this.videojuego = videojuego;
-        return this.videojuego;
+        this.videojuegos.removeIf(v -> v.getId() == videojuego.getId());
+        this.videojuegos.add(videojuego);
+        return videojuego;
     }
 
     @Override
@@ -37,6 +44,15 @@ public class ServicioVideojuego implements IServicioVideojuego{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio) {
+        return videojuegos.stream()
+                .filter(videojuego -> (id == null || videojuego.getId() == id))
+                .filter(videojuego -> (nombre == null || videojuego.getNombre().equalsIgnoreCase(nombre)))
+                .filter(videojuego -> (precio == null || videojuego.getPrecio() == precio))
+                .collect(Collectors.toList());
     }
 
 

@@ -3,6 +3,7 @@ package Servidor_Videojuego.Servidor_Videojuego.services;
 import Servidor_Videojuego.Servidor_Videojuego.model.Videojuego;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IServicioVideojuego {
     public Videojuego getVideojuego();
@@ -13,5 +14,6 @@ public interface IServicioVideojuego {
 
     public boolean deleteVideojuego(int id);
 
-    List<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio);
+    Optional<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio);
 }
+
