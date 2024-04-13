@@ -6,14 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IServicioVideojuego {
-    public Videojuego getVideojuego();
-
-    public Videojuego setVideojuego (Videojuego videojuego);
-
-    public Videojuego updateVideojuego (Videojuego videojuego, int id);
-
-    public boolean deleteVideojuego(int id);
-
-    Optional<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio);
+    Videojuego getVideojuego(int id);  // Método para obtener un videojuego por ID
+    Videojuego setVideojuego(Videojuego videojuego);  // Método para agregar o reemplazar un videojuego
+    Videojuego updateVideojuego(Videojuego videojuego, int id);  // Método para actualizar un videojuego
+    boolean deleteVideojuego(int id);  // Método para eliminar un videojuego
+    Optional<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio);  // Método para buscar videojuegos por varios atributos
 }
 

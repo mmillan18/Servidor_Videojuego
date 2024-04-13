@@ -18,9 +18,13 @@ public class ServicioVideojuego implements IServicioVideojuego{
     private List<Videojuego> videojuegos = new ArrayList<>();
 
     @Override
-    public Videojuego getVideojuego() {
-        return videojuego;
-    }
+    public Videojuego getVideojuego(int id) {
+        return videojuegos.stream()
+                .filter(v -> v.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        }
 
     @Override
     public Videojuego setVideojuego(Videojuego videojuego) {
@@ -31,20 +35,20 @@ public class ServicioVideojuego implements IServicioVideojuego{
 
     @Override
     public Videojuego updateVideojuego(Videojuego videojuego, int id) {
-
-        if (id == this.videojuego.getId()) {
-            this.videojuego = videojuego;
+        int index = videojuegos.indexOf(videojuegos.stream()
+                .filter(v -> v.getId() == id)
+                .findFirst()
+                .orElse(null));
+        if (index != -1) {
+            videojuegos.set(index, videojuego);
+            return videojuego;
         }
-        return videojuego;
+        return null;
     }
 
     @Override
     public boolean deleteVideojuego(int id) {
-        if (this.videojuego != null && id == this.videojuego.getId()) {
-            this.videojuego = null;
-            return true;
-        }
-        return false;
+        return videojuegos.removeIf(v -> v.getId() == id);
     }
 
     @Override

@@ -34,49 +34,43 @@ public class VideojuegoController {
         return "Service status fine!";
     }
 
-// Leer
-    @GetMapping
-    public ResponseEntity<Videojuego> getVideojuego(){
-
-        Videojuego videojuego;
-        videojuego = servicioVideojuego.getVideojuego();
-
-        if (videojuego == null) return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok(videojuego);
-    }
+    // Crear
 
     @PostMapping
-    public ResponseEntity<Videojuego> setVideojuego(@RequestBody Videojuego videojuego, BindingResult result) throws Exception {
-        if (result.hasErrors()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, this.formatMessage(result));
-        }
-
-        servicioVideojuego.setVideojuego(videojuego);
-        return ResponseEntity.status(HttpStatus.CREATED).body(videojuego);
+    public ResponseEntity<Videojuego> setVideojuego(@RequestBody Videojuego videojuego) {
+        Videojuego createdVideojuego = servicioVideojuego.setVideojuego(videojuego);
+        return ResponseEntity.ok(createdVideojuego);
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Videojuego> updateVideojuego(@RequestBody Videojuego videojuego,
-                                                       @PathVariable("id") int id, BindingResult result) throws Exception {
-        if (result.hasErrors()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, this.formatMessage(result));
-        }
-        Videojuego resVideojuego= servicioVideojuego.updateVideojuego(videojuego, id);
 
-        return ResponseEntity.status(HttpStatus.FOUND).body(videojuego);
+    // Leer
+    public ResponseEntity<Videojuego> getVideojuego(@PathVariable int id) {
+    Videojuego videojuego = servicioVideojuego.getVideojuego(id);
+    if (videojuego != null) {
+        return ResponseEntity.ok(videojuego);
+    }
+    return ResponseEntity.notFound().build();
+}
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Videojuego> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
+        Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
+        if (updatedVideojuego != null) {
+            return ResponseEntity.ok(updatedVideojuego);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     //////ELIMINAR
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteVideojuego(@PathVariable("id") int id) {
-        boolean deleted = servicioVideojuego.deleteVideojuego(id);
-        if (deleted) {
+    public ResponseEntity<Void> deleteVideojuego(@PathVariable int id) {
+        boolean isDeleted = servicioVideojuego.deleteVideojuego(id);
+        if (isDeleted) {
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
     }
 
     //Buscar por 3 Variantes
