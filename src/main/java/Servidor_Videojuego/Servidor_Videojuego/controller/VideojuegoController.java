@@ -20,8 +20,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/videojuego")
+@CrossOrigin(origins = "http://localhost:4200")
 
 public class VideojuegoController {
+
 
     private static int valCodigo = 0;
 
@@ -106,5 +108,6 @@ public class VideojuegoController {
 
         return jsonString;
     }
+
 }
 
