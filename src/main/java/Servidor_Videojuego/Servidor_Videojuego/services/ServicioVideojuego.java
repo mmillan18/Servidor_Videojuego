@@ -18,13 +18,9 @@ public class ServicioVideojuego implements IServicioVideojuego{
     private List<Videojuego> videojuegos = new ArrayList<>();
 
     @Override
-    public Videojuego getVideojuego(int id) {
-        return videojuegos.stream()
-                .filter(v -> v.getId() == id)
-                .findFirst()
-                .orElse(null);
-
-        }
+    public List<Videojuego> getVideojuego() {
+        return new ArrayList<>(videojuegos);
+    }
 
     @Override
     public Videojuego setVideojuego(Videojuego videojuego) {

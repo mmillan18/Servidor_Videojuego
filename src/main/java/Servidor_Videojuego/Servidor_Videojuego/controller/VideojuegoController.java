@@ -42,19 +42,6 @@ public class VideojuegoController {
         return ResponseEntity.ok(createdVideojuego);
     }
 
-
-    // Leer
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Videojuego> getVideojuego(@PathVariable int id) {
-    Videojuego videojuego = servicioVideojuego.getVideojuego(id);
-    if (videojuego != null) {
-        return ResponseEntity.ok(videojuego);
-    }
-    return ResponseEntity.notFound().build();
-}
-
-
     @PutMapping("/{id}")
     public ResponseEntity<Videojuego> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
         Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
@@ -88,6 +75,12 @@ public class VideojuegoController {
         return resultado
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/listar")
+    public ResponseEntity<List<Videojuego>> getVideojuego() {
+        var videojuegos = servicioVideojuego.getVideojuego();
+        return new ResponseEntity<>(videojuegos, HttpStatus.OK);
     }
 
     private String formatMessage(BindingResult result){
