@@ -37,8 +37,14 @@ public class VideojuegoController {
 
     @PostMapping
     public ResponseEntity<?> setVideojuego(@RequestBody Videojuego videojuego) {
+        if (videojuego.getId() == 0 || videojuego.getNombre() == null || videojuego.getNombre().isEmpty()
+                || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null) {
+            String errorMessage = "Todos los campos son obligatorios.";
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+
         if (servicioVideojuego.existeVideojuegoConId(videojuego.getId())) {
-            String errorMessage = "Ya existe un videojuego con el mismo ID :)";
+            String errorMessage = "Ya existe un videojuego con el mismo ID.";
             return ResponseEntity.badRequest().body(errorMessage);
         }
 
@@ -47,17 +53,14 @@ public class VideojuegoController {
     }
 
 
+
     //Actualizar videojuego --- OK
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
-        if (servicioVideojuego.existeVideojuegoConId(id)) {
-            String errorMessage = "Ya existe un videojuego con el mismo ID :)";
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
+    public ResponseEntity<Videojuego> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
         Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
         if (updatedVideojuego != null) {
+
             return ResponseEntity.ok(updatedVideojuego);
         }
         return ResponseEntity.notFound().build();
@@ -65,7 +68,7 @@ public class VideojuegoController {
 
     //Eliminar videojuego
 
-    @DeleteMapping(value = "/{id}")
+    /*@DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteVideojuego(@PathVariable int id) {
         boolean isDeleted = servicioVideojuego.deleteVideojuego(id);
         if (isDeleted) {
@@ -73,6 +76,24 @@ public class VideojuegoController {
         }
         return ResponseEntity.notFound().build();
     }
+
+     */
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<String> deleteVideojuego(@PathVariable int id) {
+        if (!servicioVideojuego.existeVideojuegoConId(id)) {
+            String errorMessage = "No existe un videojuego con este ID";
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+
+        boolean isDeleted = servicioVideojuego.deleteVideojuego(id);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
 
     //Consultar por 3 Variantes
 
