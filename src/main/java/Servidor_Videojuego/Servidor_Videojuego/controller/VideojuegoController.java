@@ -101,10 +101,6 @@ public class VideojuegoController {
 
 
 
-
-
-
-
     //Formato mensaje error
 
     private String formatMessage(BindingResult result){
