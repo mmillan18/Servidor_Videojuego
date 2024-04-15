@@ -36,7 +36,7 @@ public class VideojuegoController {
     // Insertar nuevo videojuego  --- OK
 
     @PostMapping
-    public ResponseEntity<?> setVideojuego(@RequestBody Videojuego videojuego) {
+    public ResponseEntity<?> addVideojuego(@RequestBody Videojuego videojuego) {
         if (videojuego.getId() == 0 || videojuego.getNombre() == null || videojuego.getNombre().isEmpty()
                 || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null) {
             String errorMessage = "Todos los campos son obligatorios.";
@@ -48,7 +48,7 @@ public class VideojuegoController {
             return ResponseEntity.badRequest().body(errorMessage);
         }
 
-        Videojuego createdVideojuego = servicioVideojuego.setVideojuego(videojuego);
+        Videojuego createdVideojuego = servicioVideojuego.addVideojuego(videojuego);
         return ResponseEntity.ok(createdVideojuego);
     }
 
@@ -60,64 +60,24 @@ public class VideojuegoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
-
-        if (videojuego.getId() == 0 || videojuego.getNombre() == null || videojuego.getNombre().isEmpty()
-                || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null ) {
-            String errorMessage = "Por favor ingresar todos los campos para atualizar";
+        if (videojuego.getNombre() == null || videojuego.getNombre().isEmpty() || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null) {
+            String errorMessage = "Por favor ingresar todos los campos para actualizar";
             return ResponseEntity.badRequest().body(errorMessage);
         }
 
-        if (servicioVideojuego.existeVideojuegoConId(videojuego.getId())) {
-            String errorMessage = "Ya existe un videojuego con el mismo ID :)";
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
-        Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
-        if (updatedVideojuego != null) {
-            return ResponseEntity.ok(updatedVideojuego);
-        }
-
-        return ResponseEntity.notFound().build();
-    }
-
-
-    /*
-    @PutMapping("/{id}")
-    public ResponseEntity<Videojuego> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
-        Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
-        if (updatedVideojuego != null) {
-
-            return ResponseEntity.ok(updatedVideojuego);
-        }
-        return ResponseEntity.notFound().build();
-    }
-     */
-
-
-    /*
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
-        if (videojuego.getNombre() == null || videojuego.getNombre().isEmpty()
-                || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null) {
-            String errorMessage = "Todos los campos son obligatorios.";
+        if (videojuego.getId() != id) {
+            String errorMessage = "El ID del videojuego no coincide con el ID de la ruta";
             return ResponseEntity.badRequest().body(errorMessage);
         }
 
         if (!servicioVideojuego.existeVideojuegoConId(id)) {
+            String errorMessage = "No existe un videojuego con este ID para actualizar";
             return ResponseEntity.notFound().build();
         }
 
-        videojuego.setId(id);
         Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
-        if (updatedVideojuego != null) {
-            return ResponseEntity.ok(updatedVideojuego);
-        } else {
-            String errorMessage = "Error al actualizar el videojuego";
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
+        return ResponseEntity.ok(updatedVideojuego);
     }
-
-     */
 
 
     //Eliminar videojuego

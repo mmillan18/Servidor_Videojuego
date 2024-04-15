@@ -22,24 +22,29 @@ public class ServicioVideojuego implements IServicioVideojuego {
     }
 
     @Override
-    public Videojuego setVideojuego(Videojuego videojuego) {
-        this.videojuegos.removeIf(v -> v.getId() == videojuego.getId());
-        this.videojuegos.add(videojuego);
-        return videojuego;
+    public Videojuego addVideojuego(Videojuego videojuego) {
+        if (!existeVideojuegoConId(videojuego.getId())) {
+            this.videojuegos.add(videojuego);
+            return videojuego;
+        }
+        throw new IllegalArgumentException("Un videojuego con el mismo ID ya existe");
     }
 
 
     @Override
     public Videojuego updateVideojuego(Videojuego videojuego, int id) {
-        int index = videojuegos.indexOf(videojuegos.stream()
+        Optional<Videojuego> existingVideojuego = videojuegos.stream()
                 .filter(v -> v.getId() == id)
-                .findFirst()
-                .orElse(null));
-        if (index != -1) {
-            videojuegos.set(index, videojuego);
-            return videojuego;
+                .findFirst();
+
+        if (existingVideojuego.isPresent()) {
+            if (videojuego.getId() == id) {
+                videojuegos.set(videojuegos.indexOf(existingVideojuego.get()), videojuego);
+                return videojuego;
+            }
+            throw new IllegalArgumentException("El ID del videojuego no coincide con el ID en la ruta");
         }
-        return null;
+        throw new RuntimeException("Videojuego no encontrado con ID: " + id);
     }
 
     @Override
