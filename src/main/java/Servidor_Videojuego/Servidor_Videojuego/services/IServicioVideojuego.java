@@ -14,6 +14,6 @@ public interface IServicioVideojuego {
     List<Videojuego> getVideojuego(); //Listar todos los videojuegos
     List<Videojuego> getVideojuego(Double precio, Boolean multijugador); //Listar por 2 atributos
 
-
+    boolean existeVideojuegoConId(int id);//Comprobar si ya existe un videojuego con el mismo ID
 }
 

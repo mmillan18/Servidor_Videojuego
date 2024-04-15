@@ -77,6 +77,11 @@ public class ServicioVideojuego implements IServicioVideojuego {
     }
 
 
+    public boolean existeVideojuegoConId(int id) {
+
+        List<Videojuego> listaVideojuegos = new ArrayList<>(videojuegos);
+        return listaVideojuegos.stream().anyMatch(vj -> vj.getId() == id);
+    }
 
 
 

@@ -36,7 +36,12 @@ public class VideojuegoController {
     // Insertar nuevo videojuego
 
     @PostMapping
-    public ResponseEntity<Videojuego> setVideojuego(@RequestBody Videojuego videojuego) {
+    public ResponseEntity<?> setVideojuego(@RequestBody Videojuego videojuego) {
+        if (servicioVideojuego.existeVideojuegoConId(videojuego.getId())) {
+            String errorMessage = "Ya existe un videojuego con el mismo ID :)";
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+
         Videojuego createdVideojuego = servicioVideojuego.setVideojuego(videojuego);
         return ResponseEntity.ok(createdVideojuego);
     }
