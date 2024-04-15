@@ -59,23 +59,25 @@ public class ServicioVideojuego implements IServicioVideojuego {
 
 
     @Override
-    public List<Videojuego> getVideojuego(String nombre, Integer id) {
+    public List<Videojuego> getVideojuego(Double precio, Boolean multijugador) {
         List<Videojuego> listaFiltrada = new ArrayList<>(videojuegos);
 
-        if (nombre != null) {
+        if (precio != null) {
             listaFiltrada = listaFiltrada.stream()
-                    .filter(vj -> vj.getNombre().equalsIgnoreCase(nombre))
+                    .filter(vj -> vj.getPrecio() == precio)
                     .collect(Collectors.toList());
         }
-
-        if (id != null) {
+        if (multijugador != null) {
             listaFiltrada = listaFiltrada.stream()
-                    .filter(vj -> vj.getId() == id)
+                    .filter(vj -> vj.isMultijugador() == multijugador)
                     .collect(Collectors.toList());
         }
 
         return listaFiltrada;
     }
+
+
+
 
 
 }

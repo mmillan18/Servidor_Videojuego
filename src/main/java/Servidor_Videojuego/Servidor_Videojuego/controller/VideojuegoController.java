@@ -38,7 +38,6 @@ public class VideojuegoController {
     @PostMapping
     public ResponseEntity<Videojuego> setVideojuego(@RequestBody Videojuego videojuego) {
         Videojuego createdVideojuego = servicioVideojuego.setVideojuego(videojuego);
-
         return ResponseEntity.ok(createdVideojuego);
     }
 
@@ -84,19 +83,22 @@ public class VideojuegoController {
 
     @GetMapping("/listar")
     public ResponseEntity<List<Videojuego>> getVideojuego() {
+
         var videojuegos = servicioVideojuego.getVideojuego();
         return new ResponseEntity<>(videojuegos, HttpStatus.OK);
     }
 
 
     //Listar por dos parametros
-    @GetMapping("/listar")
+
+    @GetMapping("/listarfiltro")
     public ResponseEntity<List<Videojuego>> getVideojuego(
-            @RequestParam(value = "nombre", required = false) String nombre,
-            @RequestParam(value = "id", required = false) Integer id) {
-        List<Videojuego> videojuegos = servicioVideojuego.getVideojuego(nombre, id);
+            @RequestParam(value = "precio", required = false) Double precio,
+            @RequestParam(value = "multijugador", required = false) Boolean multijugador) {
+        List<Videojuego> videojuegos = servicioVideojuego.getVideojuego(precio, multijugador);
         return ResponseEntity.ok(videojuegos);
     }
+
 
 
 

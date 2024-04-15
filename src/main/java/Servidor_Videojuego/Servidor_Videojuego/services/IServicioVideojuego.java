@@ -12,7 +12,8 @@ public interface IServicioVideojuego {
     boolean deleteVideojuego(int id);  // Método para eliminar un videojuego
     Optional<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio);  // Método para buscar videojuegos por varios atributos
     List<Videojuego> getVideojuego(); //Listar todos los videojuegos
-    List<Videojuego> getVideojuego(String nombre, Integer id); //Listar por 2 atributos
+    List<Videojuego> getVideojuego(Double precio, Boolean multijugador); //Listar por 2 atributos
+
 
 }
 
