@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,36 +23,39 @@ import java.util.stream.Collectors;
 
 public class VideojuegoController {
 
-
-    private static int valCodigo = 0;
-
     @Autowired
     private IServicioVideojuego servicioVideojuego;
 
+    //Verificación estado
 
     @RequestMapping(value = "/healthcheck")
     public String healthCheck(){
         return "Service status fine!";
     }
 
-    // Crear
+    // Insertar nuevo videojuego
 
     @PostMapping
     public ResponseEntity<Videojuego> setVideojuego(@RequestBody Videojuego videojuego) {
         Videojuego createdVideojuego = servicioVideojuego.setVideojuego(videojuego);
+
         return ResponseEntity.ok(createdVideojuego);
     }
+
+
+    //Actualizar videojuego
 
     @PutMapping("/{id}")
     public ResponseEntity<Videojuego> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
         Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
         if (updatedVideojuego != null) {
+
             return ResponseEntity.ok(updatedVideojuego);
         }
         return ResponseEntity.notFound().build();
     }
 
-    //////ELIMINAR
+    //Eliminar videojuego
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteVideojuego(@PathVariable int id) {
@@ -64,7 +66,7 @@ public class VideojuegoController {
         return ResponseEntity.notFound().build();
     }
 
-    //Buscar por 3 Variantes
+    //Consultar por 3 Variantes
 
     @GetMapping("/buscar")
     public ResponseEntity<Videojuego> buscarVideojuego(
@@ -73,17 +75,35 @@ public class VideojuegoController {
             @RequestParam(value = "precio", required = false) Double precio) {
 
         Optional<Videojuego> resultado = servicioVideojuego.buscarVideojuegos(id, nombre, precio);
-
         return resultado
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    //Listar todos los videojuegos
 
     @GetMapping("/listar")
     public ResponseEntity<List<Videojuego>> getVideojuego() {
         var videojuegos = servicioVideojuego.getVideojuego();
         return new ResponseEntity<>(videojuegos, HttpStatus.OK);
     }
+
+
+    //Listar por dos parametros
+    @GetMapping("/listar")
+    public ResponseEntity<List<Videojuego>> getVideojuego(
+            @RequestParam(value = "nombre", required = false) String nombre,
+            @RequestParam(value = "id", required = false) Integer id) {
+        List<Videojuego> videojuegos = servicioVideojuego.getVideojuego(nombre, id);
+        return ResponseEntity.ok(videojuegos);
+    }
+
+
+
+
+
+
+    //Formato mensaje error
 
     private String formatMessage(BindingResult result){
         List<Map<String,String>> errores = result.getFieldErrors().stream()

@@ -11,7 +11,8 @@ public interface IServicioVideojuego {
     Videojuego updateVideojuego(Videojuego videojuego, int id);  // Método para actualizar un videojuego
     boolean deleteVideojuego(int id);  // Método para eliminar un videojuego
     Optional<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio);  // Método para buscar videojuegos por varios atributos
+    List<Videojuego> getVideojuego(); //Listar todos los videojuegos
+    List<Videojuego> getVideojuego(String nombre, Integer id); //Listar por 2 atributos
 
-    List<Videojuego> getVideojuego();
 }
 

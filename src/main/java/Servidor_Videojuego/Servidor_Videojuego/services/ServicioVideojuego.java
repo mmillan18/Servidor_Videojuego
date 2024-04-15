@@ -12,8 +12,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 
-public class ServicioVideojuego implements IServicioVideojuego{
-    private Videojuego videojuego;
+public class ServicioVideojuego implements IServicioVideojuego {
 
     private List<Videojuego> videojuegos = new ArrayList<>();
 
@@ -28,6 +27,7 @@ public class ServicioVideojuego implements IServicioVideojuego{
         this.videojuegos.add(videojuego);
         return videojuego;
     }
+
 
     @Override
     public Videojuego updateVideojuego(Videojuego videojuego, int id) {
@@ -56,4 +56,28 @@ public class ServicioVideojuego implements IServicioVideojuego{
                                 (precio == null || videojuego.getPrecio() == precio))
                 .findFirst();
     }
+
+
+    @Override
+    public List<Videojuego> getVideojuego(String nombre, Integer id) {
+        List<Videojuego> listaFiltrada = new ArrayList<>(videojuegos);
+
+        if (nombre != null) {
+            listaFiltrada = listaFiltrada.stream()
+                    .filter(vj -> vj.getNombre().equalsIgnoreCase(nombre))
+                    .collect(Collectors.toList());
+        }
+
+        if (id != null) {
+            listaFiltrada = listaFiltrada.stream()
+                    .filter(vj -> vj.getId() == id)
+                    .collect(Collectors.toList());
+        }
+
+        return listaFiltrada;
+    }
+
+
 }
+
+
