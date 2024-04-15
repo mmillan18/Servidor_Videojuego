@@ -68,17 +68,6 @@ public class VideojuegoController {
 
     //Eliminar videojuego
 
-    /*@DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteVideojuego(@PathVariable int id) {
-        boolean isDeleted = servicioVideojuego.deleteVideojuego(id);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-     */
-
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<String> deleteVideojuego(@PathVariable int id) {
         if (!servicioVideojuego.existeVideojuegoConId(id)) {
