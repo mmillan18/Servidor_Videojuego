@@ -26,14 +26,14 @@ public class VideojuegoController {
     @Autowired
     private IServicioVideojuego servicioVideojuego;
 
-    //Verificación estado
+    //Verificación estado  --- OK
 
     @RequestMapping(value = "/healthcheck")
     public String healthCheck(){
         return "Service status fine!";
     }
 
-    // Insertar nuevo videojuego
+    // Insertar nuevo videojuego  --- OK
 
     @PostMapping
     public ResponseEntity<?> setVideojuego(@RequestBody Videojuego videojuego) {
@@ -47,7 +47,7 @@ public class VideojuegoController {
     }
 
 
-    //Actualizar videojuego
+    //Actualizar videojuego --- OK
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
