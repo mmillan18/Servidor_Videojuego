@@ -56,15 +56,29 @@ public class VideojuegoController {
 
     //Actualizar videojuego --- OK
 
+
     @PutMapping("/{id}")
-    public ResponseEntity<Videojuego> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
+    public ResponseEntity<?> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
+        if (videojuego.getNombre() == null || videojuego.getNombre().isEmpty()
+                || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null) {
+            String errorMessage = "Todos los campos son obligatorios.";
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+
+        if (!servicioVideojuego.existeVideojuegoConId(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        videojuego.setId(id);
         Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
         if (updatedVideojuego != null) {
-
             return ResponseEntity.ok(updatedVideojuego);
+        } else {
+            String errorMessage = "Error al actualizar el videojuego";
+            return ResponseEntity.badRequest().body(errorMessage);
         }
-        return ResponseEntity.notFound().build();
     }
+
 
     //Eliminar videojuego
 
