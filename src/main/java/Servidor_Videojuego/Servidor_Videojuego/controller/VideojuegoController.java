@@ -50,10 +50,14 @@ public class VideojuegoController {
     //Actualizar videojuego
 
     @PutMapping("/{id}")
-    public ResponseEntity<Videojuego> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
+    public ResponseEntity<?> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
+        if (servicioVideojuego.existeVideojuegoConId(id)) {
+            String errorMessage = "Ya existe un videojuego con el mismo ID :)";
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+
         Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
         if (updatedVideojuego != null) {
-
             return ResponseEntity.ok(updatedVideojuego);
         }
         return ResponseEntity.notFound().build();
