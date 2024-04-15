@@ -63,12 +63,12 @@ public class VideojuegoController {
 
         if (videojuego.getId() == 0 || videojuego.getNombre() == null || videojuego.getNombre().isEmpty()
                 || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null ) {
-            String errorMessage = "Todos los campos son obligatorios.";
+            String errorMessage = "Por favor ingresar todos los campos para atualizar";
             return ResponseEntity.badRequest().body(errorMessage);
         }
 
         if (servicioVideojuego.existeVideojuegoConId(videojuego.getId())) {
-            String errorMessage = "Ya existe un videojuego con el mismo ID.";
+            String errorMessage = "Ya existe un videojuego con el mismo ID :)";
             return ResponseEntity.badRequest().body(errorMessage);
         }
 
