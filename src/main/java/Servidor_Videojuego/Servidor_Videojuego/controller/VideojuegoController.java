@@ -98,8 +98,31 @@ public class VideojuegoController {
     }
 
 
-    //Consultar por 3 Variantes
+    //Consultar
 
+    @GetMapping
+    public ResponseEntity<?> getVideojuego(
+            @RequestParam(value = "id", required = false) Integer id,
+            @RequestParam(value = "nombre", required = false) String nombre,
+            @RequestParam(value = "precio", required = false) Double precio,
+            @RequestParam(value = "multijugador", required = false) Boolean multijugador) {
+
+        if (id != null || nombre != null) {
+            Optional<Videojuego> resultado = servicioVideojuego.buscarVideojuegos(id, nombre, precio);
+            return resultado
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } else if (precio != null || multijugador != null) {
+            List<Videojuego> videojuegos = servicioVideojuego.getVideojuego(precio, multijugador);
+            return ResponseEntity.ok(videojuegos);
+        } else {
+            List<Videojuego> videojuegos = servicioVideojuego.getVideojuego();
+            return new ResponseEntity<>(videojuegos, HttpStatus.OK);
+        }
+    }
+
+
+    /*
     @GetMapping("/buscar")
     public ResponseEntity<Videojuego> buscarVideojuego(
             @RequestParam(value = "id", required = false) Integer id,
@@ -131,6 +154,8 @@ public class VideojuegoController {
         List<Videojuego> videojuegos = servicioVideojuego.getVideojuego(precio, multijugador);
         return ResponseEntity.ok(videojuegos);
     }
+
+     */
 
 
 
