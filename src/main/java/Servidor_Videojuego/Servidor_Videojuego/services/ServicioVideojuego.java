@@ -1,9 +1,9 @@
 package Servidor_Videojuego.Servidor_Videojuego.services;
 
+import Servidor_Videojuego.Servidor_Videojuego.model.Usuario;
 import Servidor_Videojuego.Servidor_Videojuego.model.Videojuego;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
 public class ServicioVideojuego implements IServicioVideojuego {
 
-    private List<Videojuego> videojuegos = new ArrayList<>();
+    private final List<Videojuego> videojuegos = new ArrayList<>();
+    private final IServicioUsuario servicioUsuario;
 
     @Override
     public List<Videojuego> getVideojuego() {
@@ -22,13 +22,18 @@ public class ServicioVideojuego implements IServicioVideojuego {
     }
 
     @Override
-    public Videojuego addVideojuego(Videojuego videojuego) {
-        if (!existeVideojuegoConId(videojuego.getId())) {
-            this.videojuegos.add(videojuego);
-            return videojuego;
-        }
-        throw new IllegalArgumentException("Un videojuego con el mismo ID ya existe");
+    public Videojuego addVideojuego(Videojuego videojuego, int usuarioId) {
+        Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario con el ID especificado no existe."));
+
+        videojuego.setUsuario(usuario);
+        videojuegos.add(videojuego);
+
+        servicioUsuario.addVideojuegoToUsuario(usuarioId, videojuego);
+
+        return videojuego;
     }
+
 
 
     @Override
@@ -53,12 +58,11 @@ public class ServicioVideojuego implements IServicioVideojuego {
     }
 
     @Override
-    public Optional<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio) {
+    public Optional<Videojuego> buscarVideojuegos(Integer id, String nombre) {
         return videojuegos.stream()
                 .filter(videojuego ->
                         (id == null || videojuego.getId() == id) &&
-                                (nombre == null || videojuego.getNombre().equalsIgnoreCase(nombre)) &&
-                                (precio == null || videojuego.getPrecio() == precio))
+                                (nombre == null || videojuego.getNombre().equalsIgnoreCase(nombre)))
                 .findFirst();
     }
 

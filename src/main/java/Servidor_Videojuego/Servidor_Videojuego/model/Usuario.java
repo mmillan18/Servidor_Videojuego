@@ -4,18 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Usuario {
 
     private int id;
     private String nombre;
-    private LocalDateTime fechaNacimiento;
-
-
+    private double estatura;
+    private LocalDateTime fechaCreacion;
+    private boolean esPremium;
+    private List<Videojuego> videojuegos;
 }
+

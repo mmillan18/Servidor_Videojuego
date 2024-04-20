@@ -1,7 +1,9 @@
 package Servidor_Videojuego.Servidor_Videojuego.controller;
 
+import Servidor_Videojuego.Servidor_Videojuego.model.Usuario;
 import Servidor_Videojuego.Servidor_Videojuego.model.Videojuego;
 import Servidor_Videojuego.Servidor_Videojuego.services.ErrorMessage;
+import Servidor_Videojuego.Servidor_Videojuego.services.IServicioUsuario;
 import Servidor_Videojuego.Servidor_Videojuego.services.IServicioVideojuego;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,13 +20,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/videojuego")
+@RequestMapping(value = "/videojuegos")
 @CrossOrigin(origins = "http://localhost:4200")
 
 public class VideojuegoController {
 
     @Autowired
     private IServicioVideojuego servicioVideojuego;
+    private IServicioUsuario servicioUsuario;
 
     //Verificación estado  --- OK
 
@@ -37,25 +40,21 @@ public class VideojuegoController {
     // Insertar nuevo videojuego  --- OK
 
     @PostMapping
-    public ResponseEntity<?> addVideojuego(@RequestBody Videojuego videojuego) {
+    public ResponseEntity<?> addVideojuego(@RequestBody Videojuego videojuego, @RequestParam("usuarioId") int usuarioId) {
         if (videojuego.getId() == 0 || videojuego.getNombre() == null || videojuego.getNombre().isEmpty()
                 || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null) {
             String errorMessage = "Todos los campos son obligatorios.";
             return ResponseEntity.badRequest().body(errorMessage);
         }
 
-        if (servicioVideojuego.existeVideojuegoConId(videojuego.getId())) {
-            String errorMessage = "Ya existe un videojuego con el mismo ID.";
+        if (servicioUsuario.existeUsuarioConId(usuarioId)) {
+            Videojuego createdVideojuego = servicioVideojuego.addVideojuego(videojuego, usuarioId);
+            return ResponseEntity.ok(createdVideojuego);
+        } else {
+            String errorMessage = "El usuario con el ID especificado no existe.";
             return ResponseEntity.badRequest().body(errorMessage);
         }
-
-        Videojuego createdVideojuego = servicioVideojuego.addVideojuego(videojuego);
-        return ResponseEntity.ok(createdVideojuego);
     }
-
-
-
-
 
     //Actualizar videojuego --- OK
 
@@ -109,7 +108,7 @@ public class VideojuegoController {
             @RequestParam(value = "multijugador", required = false) Boolean multijugador) {
 
         if (id != null || nombre != null) {
-            Optional<Videojuego> resultado = servicioVideojuego.buscarVideojuegos(id, nombre, precio);
+            Optional<Videojuego> resultado = servicioVideojuego.buscarVideojuegos(id, nombre);
             return resultado
                     .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.notFound().build());
@@ -121,43 +120,6 @@ public class VideojuegoController {
             return new ResponseEntity<>(videojuegos, HttpStatus.OK);
         }
     }
-
-
-    /*
-    @GetMapping("/buscar")
-    public ResponseEntity<Videojuego> buscarVideojuego(
-            @RequestParam(value = "id", required = false) Integer id,
-            @RequestParam(value = "nombre", required = false) String nombre,
-            @RequestParam(value = "precio", required = false) Double precio) {
-
-        Optional<Videojuego> resultado = servicioVideojuego.buscarVideojuegos(id, nombre, precio);
-        return resultado
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    //Listar todos los videojuegos
-
-    @GetMapping("/listar")
-    public ResponseEntity<List<Videojuego>> getVideojuego() {
-
-        var videojuegos = servicioVideojuego.getVideojuego();
-        return new ResponseEntity<>(videojuegos, HttpStatus.OK);
-    }
-
-
-    //Listar por dos parametros
-
-    @GetMapping("/listarfiltro")
-    public ResponseEntity<List<Videojuego>> getVideojuego(
-            @RequestParam(value = "precio", required = false) Double precio,
-            @RequestParam(value = "multijugador", required = false) Boolean multijugador) {
-        List<Videojuego> videojuegos = servicioVideojuego.getVideojuego(precio, multijugador);
-        return ResponseEntity.ok(videojuegos);
-    }
-
-     */
-
 
 
     //Formato mensaje error
