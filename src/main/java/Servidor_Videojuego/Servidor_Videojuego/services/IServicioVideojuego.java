@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface IServicioVideojuego {
 
-
+    Videojuego addUserToVideojuego(int usuarioId, Videojuego videojuego);
     Videojuego updateVideojuego(Videojuego videojuego, int usuarioId, int id);
     boolean deleteVideojuego(int usuarioId, int id);
     Optional<Videojuego> buscarVideojuegos(Integer id, String nombre);

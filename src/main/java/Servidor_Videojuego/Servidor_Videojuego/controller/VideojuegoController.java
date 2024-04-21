@@ -37,6 +37,22 @@ public class VideojuegoController {
         return "Service status fine!";
     }
 
+    //  crear y asociar un videojuego a un usuario
+    @PostMapping("/{usuarioId}")
+    public ResponseEntity<Videojuego> crearYAsociarVideojuego(
+            @PathVariable int usuarioId,
+            @RequestBody Videojuego videojuego) {
+        try {
+            Videojuego nuevoVideojuego = servicioVideojuego.addUserToVideojuego(usuarioId, videojuego);
+            return new ResponseEntity<>(nuevoVideojuego, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    //Actualizar
     @PutMapping("/{usuarioId}/{id}")
     public ResponseEntity<Videojuego> updateVideojuego(@PathVariable int usuarioId, @PathVariable int id, @RequestBody Videojuego videojuego) {
         Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, usuarioId, id);

@@ -24,6 +24,17 @@ public class ServicioVideojuego implements IServicioVideojuego {
         this.servicioUsuario = servicioUsuario;
     }
 
+    public Videojuego addUserToVideojuego(int usuarioId, Videojuego videojuego) {
+        Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
+
+        videojuego.setUsuarioId(usuarioId); // Asegurarse de establecer el usuario ID en el videojuego
+        videojuegos.add(videojuego); // Agregar el videojuego a la lista global si es necesario
+        usuario.getVideojuegos().add(videojuego); // Agregar el videojuego a la lista de videojuegos del usuario
+        return videojuego;
+    }
+
+
     @Override
     public Videojuego updateVideojuego(Videojuego videojuego, int usuarioId, int id) {
         Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
