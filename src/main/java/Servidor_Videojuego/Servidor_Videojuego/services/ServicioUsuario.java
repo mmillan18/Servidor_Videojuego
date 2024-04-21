@@ -32,37 +32,36 @@ public class ServicioUsuario implements IServicioUsuario {
         return usuario;
     }
 
-    public Usuario addVideojuegoToUsuario(int usuarioId, Videojuego videojuego) {
-        Usuario usuario = buscarUsuario(usuarioId, null)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
-
-        if (usuario.getVideojuegos() == null) {
-            usuario.setVideojuegos(new ArrayList<>());
-        }
-        videojuego.setUsuarioId(usuarioId); // Asegurando que el usuarioId se establece correctamente
-        usuario.getVideojuegos().add(videojuego);
-        return usuario;
-    }
-
-
-
 
     @Override
     public Usuario updateUsuario(Usuario usuario, int id) {
-        Optional<Usuario> existingUsuario = usuarios.stream()
+        Optional<Usuario> existingUsuarioOpt = usuarios.stream()
                 .filter(u -> u.getId() == id)
                 .findFirst();
 
-        if (existingUsuario.isPresent()) {
-            if (usuario.getId() == id) {
-                int index = usuarios.indexOf(existingUsuario.get());
-                usuarios.set(index, usuario);
-                return usuario;
+        if (existingUsuarioOpt.isPresent()) {
+            Usuario existingUsuario = existingUsuarioOpt.get();
+
+            // Verificar si el ID del usuario proporcionado es el mismo que el ID en la ruta
+            if (usuario.getId() != id) {
+                throw new IllegalArgumentException("El ID del usuario no coincide con el ID en la ruta");
             }
-            throw new IllegalArgumentException("El ID del usuario no coincide con el ID en la ruta");
+
+            // Conservar los videojuegos existentes si el nuevo usuario no los tiene definidos
+            if (usuario.getVideojuegos() == null || usuario.getVideojuegos().isEmpty()) {
+                usuario.setVideojuegos(existingUsuario.getVideojuegos());
+            }
+
+            // Actualizar el usuario en la lista
+            int index = usuarios.indexOf(existingUsuario);
+            usuarios.set(index, usuario); // Actualizar el objeto existente en la lista
+
+            return usuario;
         }
+
         throw new RuntimeException("Usuario no encontrado con ID: " + id);
     }
+
 
 
     @Override

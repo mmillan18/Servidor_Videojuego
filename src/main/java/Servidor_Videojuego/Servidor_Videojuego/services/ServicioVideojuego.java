@@ -25,12 +25,24 @@ public class ServicioVideojuego implements IServicioVideojuego {
     }
 
     public Videojuego addUserToVideojuego(int usuarioId, Videojuego videojuego) {
+        // Buscar el usuario
         Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
 
-        videojuego.setUsuarioId(usuarioId); // Asegurarse de establecer el usuario ID en el videojuego
-        videojuegos.add(videojuego); // Agregar el videojuego a la lista global si es necesario
-        usuario.getVideojuegos().add(videojuego); // Agregar el videojuego a la lista de videojuegos del usuario
+        // Verificar si el videojuego con el mismo ID ya existe
+        if (videojuegos.stream().anyMatch(v -> v.getId() == videojuego.getId())) {
+            throw new IllegalArgumentException("Un videojuego con el mismo ID ya existe");
+        }
+
+        // Asignar usuario ID al videojuego
+        videojuego.setUsuarioId(usuarioId);
+
+        // Agregar el videojuego a la lista global si es necesario
+        videojuegos.add(videojuego);
+
+        // Agregar el videojuego a la lista de videojuegos del usuario
+        usuario.getVideojuegos().add(videojuego);
+
         return videojuego;
     }
 

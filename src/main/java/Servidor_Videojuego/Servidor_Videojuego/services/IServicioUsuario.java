@@ -11,7 +11,6 @@ public interface IServicioUsuario {
 
     // Métodos para manejar usuarios
     Usuario addUsuario(Usuario usuario);
-    Usuario addVideojuegoToUsuario(int usuarioId, Videojuego videojuego);
     Usuario updateUsuario(Usuario usuario, int id);
     boolean deleteUsuario(int id);
     Optional<Usuario> buscarUsuario(Integer id, String nombre);
