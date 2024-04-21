@@ -19,6 +19,5 @@ public class Videojuego {
     private double precio;
     private boolean multijugador;
     private LocalDateTime fechaLanzamiento;
-    private Usuario usuario;
 }
 

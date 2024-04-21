@@ -26,9 +26,7 @@ public class ServicioVideojuego implements IServicioVideojuego {
         Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
                 .orElseThrow(() -> new IllegalArgumentException("El usuario con el ID especificado no existe."));
 
-        videojuego.setUsuario(usuario);
         videojuegos.add(videojuego);
-
         servicioUsuario.addVideojuegoToUsuario(usuarioId, videojuego);
 
         return videojuego;
