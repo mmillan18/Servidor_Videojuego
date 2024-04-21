@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ServicioUsuario implements IServicioUsuario {
+public class
+ServicioUsuario implements IServicioUsuario {
 
     private List<Usuario> usuarios = new ArrayList<>();
     private IServicioVideojuego servicioVideojuego;
