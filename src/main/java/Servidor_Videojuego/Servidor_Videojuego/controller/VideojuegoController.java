@@ -37,89 +37,77 @@ public class VideojuegoController {
         return "Service status fine!";
     }
 
-    // Insertar nuevo videojuego  --- OK
-
-    @PostMapping
-    public ResponseEntity<?> addVideojuego(@RequestBody Videojuego videojuego, @RequestParam("usuarioId") int usuarioId) {
-        if (videojuego.getId() == 0 || videojuego.getNombre() == null || videojuego.getNombre().isEmpty()
-                || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null) {
-            String errorMessage = "Todos los campos son obligatorios.";
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
-        if (servicioUsuario.existeUsuarioConId(usuarioId)) {
-            Videojuego createdVideojuego = servicioVideojuego.addVideojuego(videojuego, usuarioId);
-            return ResponseEntity.ok(createdVideojuego);
-        } else {
-            String errorMessage = "El usuario con el ID especificado no existe.";
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-    }
-
-    //Actualizar videojuego --- OK
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateVideojuego(@RequestBody Videojuego videojuego, @PathVariable int id) {
-        if (videojuego.getNombre() == null || videojuego.getNombre().isEmpty() || videojuego.getPrecio() == 0.0 || videojuego.getFechaLanzamiento() == null) {
-            String errorMessage = "Por favor ingresar todos los campos para actualizar";
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
-        if (videojuego.getId() != id) {
-            String errorMessage = "El ID del videojuego no coincide con el ID de la ruta";
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
-        if (!servicioVideojuego.existeVideojuegoConId(id)) {
-            String errorMessage = "No existe un videojuego con este ID para actualizar";
-            return ResponseEntity.notFound().build();
-        }
-
-        Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, id);
+    @PutMapping("/{usuarioId}/{id}")
+    public ResponseEntity<Videojuego> updateVideojuego(@PathVariable int usuarioId, @PathVariable int id, @RequestBody Videojuego videojuego) {
+        Videojuego updatedVideojuego = servicioVideojuego.updateVideojuego(videojuego, usuarioId, id);
         return ResponseEntity.ok(updatedVideojuego);
     }
 
 
     //Eliminar videojuego
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteVideojuego(@PathVariable int id) {
-        if (!servicioVideojuego.existeVideojuegoConId(id)) {
-            String errorMessage = "No existe un videojuego con este ID";
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
-        boolean isDeleted = servicioVideojuego.deleteVideojuego(id);
+    @DeleteMapping("/{usuarioId}/{id}")
+    public ResponseEntity<?> deleteVideojuego(@PathVariable int usuarioId, @PathVariable int id) {
+        boolean isDeleted = servicioVideojuego.deleteVideojuego(usuarioId, id);
         if (isDeleted) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
         }
-
-        return ResponseEntity.notFound().build();
     }
 
 
     //Consultar
 
-    @GetMapping
-    public ResponseEntity<?> getVideojuego(
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<?> getVideojuegosDeUsuario(
+            @PathVariable Integer usuarioId,
             @RequestParam(value = "id", required = false) Integer id,
             @RequestParam(value = "nombre", required = false) String nombre,
             @RequestParam(value = "precio", required = false) Double precio,
             @RequestParam(value = "multijugador", required = false) Boolean multijugador) {
 
-        if (id != null || nombre != null) {
-            Optional<Videojuego> resultado = servicioVideojuego.buscarVideojuegos(id, nombre);
-            return resultado
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.notFound().build());
-        } else if (precio != null || multijugador != null) {
-            List<Videojuego> videojuegos = servicioVideojuego.getVideojuego(precio, multijugador);
+        // Filtrar los videojuegos del usuario por ID o nombre
+        List<Videojuego> videojuegos = servicioVideojuego.getVideojuegosDeUsuario(usuarioId).stream()
+                .filter(v -> (id == null || v.getId() == id) && // Usar == para comparar int
+                        (nombre == null || v.getNombre().equalsIgnoreCase(nombre)))
+                .collect(Collectors.toList());
+
+        if (!videojuegos.isEmpty() && (precio != null || multijugador != null)) {
+            // Filtrar además por precio y si son multijugador
+            videojuegos = videojuegos.stream()
+                    .filter(v -> (precio == null || Double.compare(v.getPrecio(), precio) == 0) && // Usar Double.compare para comparar double
+                            (multijugador == null || v.isMultijugador() == multijugador)) // Usar == para comparar boolean
+                    .collect(Collectors.toList());
+        }
+
+        if (videojuegos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(videojuegos);
+    }
+
+
+    @GetMapping("/{usuarioId}")
+    public ResponseEntity<?> getVideojuegosDeUsuario(@PathVariable int usuarioId) {
+        try {
+            List<Videojuego> videojuegos = servicioVideojuego.getVideojuegosDeUsuario(usuarioId);
             return ResponseEntity.ok(videojuegos);
-        } else {
-            List<Videojuego> videojuegos = servicioVideojuego.getVideojuego();
-            return new ResponseEntity<>(videojuegos, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping
+    public ResponseEntity<List<Videojuego>> getAllVideojuegos() {
+        List<Videojuego> videojuegos = servicioVideojuego.getVideojuego();  // Asume que este método devuelve todos los videojuegos
+        if (videojuegos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(videojuegos);
+    }
+
 
 
     //Formato mensaje error

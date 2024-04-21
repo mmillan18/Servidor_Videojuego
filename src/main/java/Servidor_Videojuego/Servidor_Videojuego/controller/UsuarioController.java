@@ -29,57 +29,31 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addUsuario(@Validated @RequestBody Usuario usuario, BindingResult result) {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(formatMessage(result));
-        }
-
-        try {
-            Usuario nuevoUsuario = servicioUsuario.addUsuario(usuario);
-            return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Usuario> addUsuario(@RequestBody Usuario usuario) {
+        Usuario nuevoUsuario = servicioUsuario.addUsuario(usuario);
+        return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }
 
     @PostMapping("/{usuarioId}/videojuegos")
-    public ResponseEntity<?> addVideojuegoToUsuario(@PathVariable int usuarioId, @RequestBody Videojuego videojuego) {
-        try {
-            Usuario usuario = servicioUsuario.addVideojuegoToUsuario(usuarioId, videojuego);
-            return new ResponseEntity<>(usuario, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Usuario> addVideojuegoToUsuario(@PathVariable int usuarioId, @RequestBody Videojuego videojuego) {
+        Usuario usuario = servicioUsuario.addVideojuegoToUsuario(usuarioId, videojuego);
+        return new ResponseEntity<>(usuario, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUsuario(@Validated @RequestBody Usuario usuario, @PathVariable int id, BindingResult result) {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(formatMessage(result));
-        }
-
-        if (usuario.getId() != id) {
-            return ResponseEntity.badRequest().body("El ID del usuario no coincide con el ID en la ruta.");
-        }
-
-        if (!servicioUsuario.existeUsuarioConId(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        try {
-            Usuario updateUsuario = servicioUsuario.updateUsuario(usuario, id);
-            return ResponseEntity.ok(updateUsuario);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Usuario> updateUsuario(@RequestBody Usuario usuario, @PathVariable int id) {
+        Usuario updatedUsuario = servicioUsuario.updateUsuario(usuario, id);
+        return ResponseEntity.ok(updatedUsuario);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUsuario(@PathVariable int id) {
-        if (!servicioUsuario.deleteUsuario(id)) {
+        boolean isDeleted = servicioUsuario.deleteUsuario(id);
+        if (isDeleted) {
+            return ResponseEntity.ok().build();
+        } else {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

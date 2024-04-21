@@ -39,9 +39,11 @@ public class ServicioUsuario implements IServicioUsuario {
         if (usuario.getVideojuegos() == null) {
             usuario.setVideojuegos(new ArrayList<>());
         }
+        videojuego.setUsuarioId(usuarioId); // Asegurando que el usuarioId se establece correctamente
         usuario.getVideojuegos().add(videojuego);
         return usuario;
     }
+
 
 
 
