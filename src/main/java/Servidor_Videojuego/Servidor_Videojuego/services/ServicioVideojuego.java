@@ -24,27 +24,31 @@ public class ServicioVideojuego implements IServicioVideojuego {
         this.servicioUsuario = servicioUsuario;
     }
 
+    @Override
     public Videojuego addUserToVideojuego(int usuarioId, Videojuego videojuego) {
-        // Buscar el usuario
+        // Buscar el usuario por ID usando el servicio de usuarios
         Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
 
-        // Verificar si el videojuego con el mismo ID ya existe
-        if (videojuegos.stream().anyMatch(v -> v.getId() == videojuego.getId())) {
-            throw new IllegalArgumentException("Un videojuego con el mismo ID ya existe");
-        }
-
-        // Asignar usuario ID al videojuego
+        // Configura el usuarioId en el videojuego para asociarlo correctamente
         videojuego.setUsuarioId(usuarioId);
 
-        // Agregar el videojuego a la lista global si es necesario
+        // Agrega el videojuego a la lista de videojuegos del usuario
+        if (usuario.getVideojuegos() == null) {
+            usuario.setVideojuegos(new ArrayList<>());
+        }
+        usuario.getVideojuegos().add(videojuego);
+
+        // Opcionalmente, guarda el videojuego en la lista global si manejas una cache o similar
         videojuegos.add(videojuego);
 
-        // Agregar el videojuego a la lista de videojuegos del usuario
-        usuario.getVideojuegos().add(videojuego);
+        // Aquí deberías persistir los cambios en la base de datos, si aplicase
+        // Por ejemplo, podrías llamar a un método del repositorio para guardar el videojuego
 
         return videojuego;
     }
+
+
 
 
     @Override

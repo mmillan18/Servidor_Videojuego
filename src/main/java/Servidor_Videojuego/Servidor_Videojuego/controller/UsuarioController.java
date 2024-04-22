@@ -36,10 +36,34 @@ public class UsuarioController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUsuario(@RequestBody Usuario usuario, @PathVariable int id) {
-        Usuario updatedUsuario = servicioUsuario.updateUsuario(usuario, id);
-        return ResponseEntity.ok(updatedUsuario);
+    public ResponseEntity<Usuario> updateUsuario(@PathVariable int id, @RequestBody Usuario usuario) {
+        try {
+            Usuario existingUsuario = servicioUsuario.buscarUsuario(id, null)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
+
+            // Preservar la lista original de videojuegos
+            List<Videojuego> originalVideojuegos = existingUsuario.getVideojuegos();
+
+            // Actualizar los atributos del usuario excepto los videojuegos
+            existingUsuario.setNombre(usuario.getNombre());
+            existingUsuario.setEstatura(usuario.getEstatura());
+            existingUsuario.setFechaNacimiento(usuario.getFechaNacimiento());
+            existingUsuario.setEsPremium(usuario.isEsPremium());
+
+            // Restablecer la lista original de videojuegos
+            existingUsuario.setVideojuegos(originalVideojuegos);
+
+            // Guardar el usuario actualizado
+            Usuario updatedUsuario = servicioUsuario.updateUsuario(existingUsuario, id);
+
+            return ResponseEntity.ok(updatedUsuario);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUsuario(@PathVariable int id) {

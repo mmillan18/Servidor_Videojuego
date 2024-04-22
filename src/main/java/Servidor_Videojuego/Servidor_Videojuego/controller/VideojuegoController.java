@@ -39,20 +39,20 @@ public class VideojuegoController {
 
     //  crear y asociar un videojuego a un usuario
     @PostMapping("/{usuarioId}")
-    public ResponseEntity<?> addUserToVideojuego(
+    public ResponseEntity<Videojuego> crearYAsociarVideojuego(
             @PathVariable int usuarioId,
             @RequestBody Videojuego videojuego) {
         try {
+            // Crear y asociar el videojuego al usuario
             Videojuego nuevoVideojuego = servicioVideojuego.addUserToVideojuego(usuarioId, videojuego);
             return new ResponseEntity<>(nuevoVideojuego, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            // Retorna un cuerpo de respuesta con un mensaje de error detallado
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
         } catch (Exception e) {
-            // Proporciona un mensaje más específico para errores no esperados
-            return ResponseEntity.internalServerError().body("Error interno del servidor al procesar la solicitud de creación del videojuego");
+            return ResponseEntity.internalServerError().build();
         }
     }
+
 
 
     //Actualizar

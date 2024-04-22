@@ -39,30 +39,26 @@ public class ServicioUsuario implements IServicioUsuario {
                 .filter(u -> u.getId() == id)
                 .findFirst();
 
-        if (existingUsuarioOpt.isPresent()) {
-            Usuario existingUsuario = existingUsuarioOpt.get();
-
-            // Verificar si el ID del usuario proporcionado es el mismo que el ID en la ruta
-            if (usuario.getId() != id) {
-                throw new IllegalArgumentException("El ID del usuario no coincide con el ID en la ruta");
-            }
-
-            // Conservar los videojuegos existentes si el nuevo usuario no los tiene definidos
-            if (usuario.getVideojuegos() == null || usuario.getVideojuegos().isEmpty()) {
-                usuario.setVideojuegos(existingUsuario.getVideojuegos());
-            }
-
-            // Actualizar el usuario en la lista
-            int index = usuarios.indexOf(existingUsuario);
-            usuarios.set(index, usuario); // Actualizar el objeto existente en la lista
-
-            return usuario;
+        if (!existingUsuarioOpt.isPresent()) {
+            throw new RuntimeException("Usuario no encontrado con ID: " + id);
         }
 
-        throw new RuntimeException("Usuario no encontrado con ID: " + id);
+        Usuario existingUsuario = existingUsuarioOpt.get();
+
+        // Preservar la lista original de videojuegos antes de actualizar
+        List<Videojuego> originalVideojuegos = existingUsuario.getVideojuegos();
+
+        // Actualizar los atributos del usuario
+        existingUsuario.setNombre(usuario.getNombre());
+        existingUsuario.setEstatura(usuario.getEstatura());
+        existingUsuario.setFechaNacimiento(usuario.getFechaNacimiento());
+        existingUsuario.setEsPremium(usuario.isEsPremium());
+
+        // Reestablecer la lista original de videojuegos
+        existingUsuario.setVideojuegos(originalVideojuegos);
+
+        return existingUsuario;
     }
-
-
 
     @Override
     public boolean deleteUsuario(int id) {
