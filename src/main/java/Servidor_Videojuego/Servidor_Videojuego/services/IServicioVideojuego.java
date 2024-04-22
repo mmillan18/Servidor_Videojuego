@@ -17,6 +17,5 @@ public interface IServicioVideojuego {
     List<Videojuego> getVideojuego();
     List<Videojuego> getVideojuego(Double precio, Boolean multijugador);
     boolean existeVideojuegoConId(int id);
-
 }
 

@@ -17,5 +17,4 @@ public interface IServicioUsuario {
     List<Usuario> getUsuarios();
     List<Usuario> getUsuarios(Double estatura, Boolean esPremium);
     boolean existeUsuarioConId(int id);
-
 }

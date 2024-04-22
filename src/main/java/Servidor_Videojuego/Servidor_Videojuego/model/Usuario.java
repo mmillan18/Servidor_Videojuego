@@ -20,6 +20,4 @@ public class Usuario {
     private LocalDateTime fechaNacimiento;
     private boolean esPremium;
     private List<Videojuego> videojuegos;
-
-
 }

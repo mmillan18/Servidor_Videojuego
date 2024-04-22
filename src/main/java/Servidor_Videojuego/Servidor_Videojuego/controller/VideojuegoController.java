@@ -30,9 +30,7 @@ public class VideojuegoController {
     private IServicioUsuario servicioUsuario;
 
     //Verificación estado  --- OK
-
     @RequestMapping(value = "/healthcheck")
-
     public String healthCheck(){
         return "Service status fine!";
     }
@@ -53,8 +51,6 @@ public class VideojuegoController {
         }
     }
 
-
-
     //Actualizar
     @PutMapping("/{usuarioId}/{id}")
     public ResponseEntity<Videojuego> updateVideojuego(@PathVariable int usuarioId, @PathVariable int id, @RequestBody Videojuego videojuego) {
@@ -64,7 +60,6 @@ public class VideojuegoController {
 
 
     //Eliminar videojuego
-
     @DeleteMapping("/{usuarioId}/{id}")
     public ResponseEntity<?> deleteVideojuego(@PathVariable int usuarioId, @PathVariable int id) {
         boolean isDeleted = servicioVideojuego.deleteVideojuego(usuarioId, id);
@@ -75,9 +70,7 @@ public class VideojuegoController {
         }
     }
 
-
     //Consultar
-
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<?> getVideojuegosDeUsuario(
             @PathVariable Integer usuarioId,
@@ -99,14 +92,11 @@ public class VideojuegoController {
                             (multijugador == null || v.isMultijugador() == multijugador)) // Usar == para comparar boolean
                     .collect(Collectors.toList());
         }
-
         if (videojuegos.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(videojuegos);
     }
-
 
     @GetMapping("/{usuarioId}")
     public ResponseEntity<?> getVideojuegosDeUsuario(@PathVariable int usuarioId) {
@@ -120,17 +110,14 @@ public class VideojuegoController {
 
     @GetMapping
     public ResponseEntity<List<Videojuego>> getAllVideojuegos() {
-        List<Videojuego> videojuegos = servicioVideojuego.getVideojuego();  // Asume que este método devuelve todos los videojuegos
+        List<Videojuego> videojuegos = servicioVideojuego.getVideojuego();
         if (videojuegos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(videojuegos);
     }
 
-
-
     //Formato mensaje error
-
     private String formatMessage(BindingResult result){
         List<Map<String,String>> errores = result.getFieldErrors().stream()
                 .map(err -> {
@@ -138,12 +125,10 @@ public class VideojuegoController {
                     error.put(err.getField(), err.getDefaultMessage());
                     return error;
                 }).collect(Collectors.toList());
-
         ErrorMessage errorMessage = ErrorMessage.builder()
                 .code("01")
                 .mensajes(errores)
                 .build();
-
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = "";
         try {
@@ -151,9 +136,7 @@ public class VideojuegoController {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
         return jsonString;
     }
-
 }
 

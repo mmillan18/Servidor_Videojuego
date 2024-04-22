@@ -4,6 +4,7 @@ import Servidor_Videojuego.Servidor_Videojuego.model.Usuario;
 import Servidor_Videojuego.Servidor_Videojuego.model.Videojuego;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,16 +13,16 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
+
 public class ServicioUsuario implements IServicioUsuario {
 
     private List<Usuario> usuarios = new ArrayList<>();
     private IServicioVideojuego servicioVideojuego;
 
-
     public ServicioUsuario(IServicioVideojuego servicioVideojuego) {
         this.servicioVideojuego = servicioVideojuego;
     }
-
 
     @Override
     public Usuario addUsuario(Usuario usuario) {
@@ -32,31 +33,24 @@ public class ServicioUsuario implements IServicioUsuario {
         return usuario;
     }
 
-
     @Override
     public Usuario updateUsuario(Usuario usuario, int id) {
         Optional<Usuario> existingUsuarioOpt = usuarios.stream()
                 .filter(u -> u.getId() == id)
                 .findFirst();
-
         if (!existingUsuarioOpt.isPresent()) {
             throw new RuntimeException("Usuario no encontrado con ID: " + id);
         }
-
         Usuario existingUsuario = existingUsuarioOpt.get();
-
         // Preservar la lista original de videojuegos antes de actualizar
         List<Videojuego> originalVideojuegos = existingUsuario.getVideojuegos();
-
         // Actualizar los atributos del usuario
         existingUsuario.setNombre(usuario.getNombre());
         existingUsuario.setEstatura(usuario.getEstatura());
         existingUsuario.setFechaNacimiento(usuario.getFechaNacimiento());
         existingUsuario.setEsPremium(usuario.isEsPremium());
-
         // Reestablecer la lista original de videojuegos
         existingUsuario.setVideojuegos(originalVideojuegos);
-
         return existingUsuario;
     }
 
@@ -92,7 +86,6 @@ public class ServicioUsuario implements IServicioUsuario {
                     .filter(us -> us.isEsPremium() == esPremium)
                     .collect(Collectors.toList());
         }
-
         return listaFiltrada;
     }
 

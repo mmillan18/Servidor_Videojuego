@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuarios")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController {
 
     @Autowired
@@ -34,22 +35,18 @@ public class UsuarioController {
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUsuario(@PathVariable int id, @RequestBody Usuario usuario) {
         try {
             Usuario existingUsuario = servicioUsuario.buscarUsuario(id, null)
                     .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
-
             // Preservar la lista original de videojuegos
             List<Videojuego> originalVideojuegos = existingUsuario.getVideojuegos();
-
             // Actualizar los atributos del usuario excepto los videojuegos
             existingUsuario.setNombre(usuario.getNombre());
             existingUsuario.setEstatura(usuario.getEstatura());
             existingUsuario.setFechaNacimiento(usuario.getFechaNacimiento());
             existingUsuario.setEsPremium(usuario.isEsPremium());
-
             // Restablecer la lista original de videojuegos
             existingUsuario.setVideojuegos(originalVideojuegos);
 
@@ -63,7 +60,6 @@ public class UsuarioController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUsuario(@PathVariable int id) {
@@ -81,7 +77,6 @@ public class UsuarioController {
             @RequestParam(value = "nombre", required = false) String nombre,
             @RequestParam(value = "estatura", required = false) Double estatura,
             @RequestParam(value = "esPremium", required = false) Boolean esPremium) {
-
         if (id != null || nombre != null) {
             Optional<Usuario> resultado = servicioUsuario.buscarUsuario(id, nombre);
             return resultado
@@ -96,7 +91,6 @@ public class UsuarioController {
         }
     }
 
-
     private String formatMessage(BindingResult result){
         List<Map<String, String>> errores = result.getFieldErrors().stream()
                 .map(err -> {
@@ -104,12 +98,10 @@ public class UsuarioController {
                     error.put(err.getField(), err.getDefaultMessage());
                     return error;
                 }).collect(Collectors.toList());
-
         ErrorMessage errorMessage = ErrorMessage.builder()
                 .code("01")
                 .mensajes(errores)
                 .build();
-
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = "";
         try {
@@ -117,7 +109,6 @@ public class UsuarioController {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
         return jsonString;
     }
 }
