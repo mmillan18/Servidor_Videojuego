@@ -32,7 +32,6 @@ public class VideojuegoController {
     //Verificación estado  --- OK
 
     @RequestMapping(value = "/healthcheck")
-
     public String healthCheck(){
         return "Service status fine!";
     }

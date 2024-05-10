@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/usuarios")
 
-@CrossOrigin(origins = "http://localhost:7005")
+@CrossOrigin(origins = {"http://127.0.0.1:8000", "http://localhost:4200/"})
 public class UsuarioController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class UsuarioController {
         return "Service status fine!";
     }
 
-    @PostMapping
+    @PostMapping    
     public ResponseEntity<Usuario> addUsuario(@RequestBody Usuario usuario) {
         Usuario nuevoUsuario = servicioUsuario.addUsuario(usuario);
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);

@@ -1,5 +1,6 @@
 package Servidor_Videojuego.Servidor_Videojuego.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,14 +12,26 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-
+@Entity
 public class Videojuego {
 
+    @Id
     private int id;
-    private String nombre;
-    private double precio;
-    private boolean multijugador;
-    private LocalDateTime fechaLanzamiento;
-    private int usuarioId;
-}
 
+    @Column(name = "nombre")
+    private String nombre;
+
+    @Column(name = "precio")
+    private double precio;
+
+    @Column(name = "multijugador")
+    private boolean multijugador;
+
+    @Column(name = "fecha_lanzamiento")
+    private LocalDateTime fechaLanzamiento;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario; // Referencia al objeto Usuario completo
+
+}
