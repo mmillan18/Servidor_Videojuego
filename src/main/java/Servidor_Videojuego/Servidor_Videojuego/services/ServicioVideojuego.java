@@ -2,7 +2,9 @@ package Servidor_Videojuego.Servidor_Videojuego.services;
 
 import Servidor_Videojuego.Servidor_Videojuego.model.Usuario;
 import Servidor_Videojuego.Servidor_Videojuego.model.Videojuego;
+import Servidor_Videojuego.Servidor_Videojuego.repositories.VideoJuegoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,114 +14,90 @@ import java.util.stream.Collectors;
 @Service
 public class ServicioVideojuego implements IServicioVideojuego {
 
-    private final List<Videojuego> videojuegos = new ArrayList<>();
+    //private final List<Videojuego> videojuegos = new ArrayList<>();
     private final IServicioUsuario servicioUsuario;
+
+    @Autowired
+    private VideoJuegoRepository videoJuegoRepository;
 
     @Override
     public List<Videojuego> getVideojuego() {
-        return new ArrayList<>(videojuegos);
+        return videoJuegoRepository.findAll();
     }
 
     public ServicioVideojuego(IServicioUsuario servicioUsuario) {
         this.servicioUsuario = servicioUsuario;
     }
 
-    @Override
     public Videojuego addUserToVideojuego(int usuarioId, Videojuego videojuego) {
-        // Buscar el usuario por ID usando el servicio de usuarios
         Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
 
-        // Configura el usuarioId en el videojuego para asociarlo correctamente
-        videojuego.setUsuarioId(usuarioId);
-
-        // Agrega el videojuego a la lista de videojuegos del usuario
-        if (usuario.getVideojuegos() == null) {
-            usuario.setVideojuegos(new ArrayList<>());
+        if (videoJuegoRepository.existsById(videojuego.getId())) {
+            throw new IllegalArgumentException("Un videojuego con el mismo ID ya existe");
         }
-        usuario.getVideojuegos().add(videojuego);
 
-        // Opcionalmente, guarda el videojuego en la lista global si manejas una cache o similar
-        videojuegos.add(videojuego);
-
-        // Aquí deberías persistir los cambios en la base de datos, si aplicase
-        // Por ejemplo, podrías llamar a un método del repositorio para guardar el videojuego
-
-        return videojuego;
+        videojuego.setUsuario(usuario);
+        return videoJuegoRepository.save(videojuego);
     }
-
-
 
 
     @Override
     public Videojuego updateVideojuego(Videojuego videojuego, int usuarioId, int id) {
-        Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
+        return videoJuegoRepository.findById(id)
+                .map(existingVideojuego -> {
+                    if (existingVideojuego.getUsuario().getId() != usuarioId) {
+                        throw new IllegalArgumentException("Videojuego no pertenece al usuario con ID: " + usuarioId);
+                    }
+                    existingVideojuego.setNombre(videojuego.getNombre());
+                    existingVideojuego.setPrecio(videojuego.getPrecio());
+                    existingVideojuego.setMultijugador(videojuego.isMultijugador());
+                    existingVideojuego.setFechaLanzamiento(videojuego.getFechaLanzamiento());
+                    return videoJuegoRepository.save(existingVideojuego);
+                })
+                .orElseThrow(() -> new RuntimeException("Videojuego no encontrado con ID: " + id));
 
-        Videojuego existingVideojuego = usuario.getVideojuegos().stream()
-                .filter(v -> v.getId() == id && v.getUsuarioId() == usuarioId)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Videojuego no encontrado con ID: " + id + " para este usuario"));
-
-        existingVideojuego.setNombre(videojuego.getNombre());
-        existingVideojuego.setPrecio(videojuego.getPrecio());
-        existingVideojuego.setMultijugador(videojuego.isMultijugador());
-        existingVideojuego.setFechaLanzamiento(videojuego.getFechaLanzamiento());
-
-        return existingVideojuego;
     }
 
     @Override
     public boolean deleteVideojuego(int usuarioId, int id) {
-        Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
-
-        return usuario.getVideojuegos().removeIf(v -> v.getId() == id && v.getUsuarioId() == usuarioId);
+        Optional<Videojuego> videojuego = videoJuegoRepository.findById(id);
+        videojuego.ifPresent(videoJuegoRepository::delete);
+        return videojuego.isPresent();
     }
 
 
     @Override
     public Optional<Videojuego> buscarVideojuegos(Integer id, String nombre) {
-        return videojuegos.stream()
-                .filter(videojuego ->
-                        (id == null || videojuego.getId() == id) &&
-                                (nombre == null || videojuego.getNombre().equalsIgnoreCase(nombre)))
-                .findFirst();
+        return videoJuegoRepository.findByIdAndNombre(id, nombre);
     }
 
 
     @Override
     public List<Videojuego> getVideojuego(Double precio, Boolean multijugador) {
-        List<Videojuego> listaFiltrada = new ArrayList<>(videojuegos);
-
-        if (precio != null) {
-            listaFiltrada = listaFiltrada.stream()
-                    .filter(vj -> vj.getPrecio() == precio)
-                    .collect(Collectors.toList());
+        if (precio != null && multijugador != null) {
+            return videoJuegoRepository.findByPrecioAndMultijugador(precio, multijugador);
+        } else if (precio != null) {
+            return videoJuegoRepository.findByPrecio(precio);
+        } else if (multijugador != null) {
+            return videoJuegoRepository.findByMultijugador(multijugador);
+        } else {
+            return videoJuegoRepository.findAll();
         }
-        if (multijugador != null) {
-            listaFiltrada = listaFiltrada.stream()
-                    .filter(vj -> vj.isMultijugador() == multijugador)
-                    .collect(Collectors.toList());
-        }
-
-        return listaFiltrada;
     }
 
     @Override
     public List<Videojuego> getVideojuegosDeUsuario(int usuarioId) {
         Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
-        return usuario.getVideojuegos();
+        return new ArrayList<>(usuario.getVideojuegos());
     }
 
     @Override
     public Usuario getUsuarioDeVideojuego(int videojuegoId) {
-        return videojuegos.stream()
-                .filter(v -> v.getId() == videojuegoId)
-                .findFirst()
-                .map(v -> servicioUsuario.buscarUsuario(v.getId(), null).orElse(null))
-                .orElseThrow(() -> new RuntimeException("No se encontró un usuario para el videojuego con ID: " + videojuegoId));
+        Videojuego videojuego = videoJuegoRepository.findById(videojuegoId)
+                .orElseThrow(() -> new RuntimeException("Videojuego no encontrado con ID: " + videojuegoId));
+        return videojuego.getUsuario();
     }
 
 
@@ -127,8 +105,7 @@ public class ServicioVideojuego implements IServicioVideojuego {
 
     public boolean existeVideojuegoConId(int id) {
 
-        List<Videojuego> listaVideojuegos = new ArrayList<>(videojuegos);
-        return listaVideojuegos.stream().anyMatch(vj -> vj.getId() == id);
+        return videoJuegoRepository.existsById(id);
     }
 
 

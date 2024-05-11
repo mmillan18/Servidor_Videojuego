@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuarios")
-@CrossOrigin(origins = "http://localhost:4200")
+
+@CrossOrigin(origins = {"http://127.0.0.1:8000", "http://localhost:4200/"})
 public class UsuarioController {
 
     @Autowired
@@ -29,36 +30,17 @@ public class UsuarioController {
         return "Service status fine!";
     }
 
-    @PostMapping
+    @PostMapping    
     public ResponseEntity<Usuario> addUsuario(@RequestBody Usuario usuario) {
         Usuario nuevoUsuario = servicioUsuario.addUsuario(usuario);
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }
 
+
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUsuario(@PathVariable int id, @RequestBody Usuario usuario) {
-        try {
-            Usuario existingUsuario = servicioUsuario.buscarUsuario(id, null)
-                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
-            // Preservar la lista original de videojuegos
-            List<Videojuego> originalVideojuegos = existingUsuario.getVideojuegos();
-            // Actualizar los atributos del usuario excepto los videojuegos
-            existingUsuario.setNombre(usuario.getNombre());
-            existingUsuario.setEstatura(usuario.getEstatura());
-            existingUsuario.setFechaNacimiento(usuario.getFechaNacimiento());
-            existingUsuario.setEsPremium(usuario.isEsPremium());
-            // Restablecer la lista original de videojuegos
-            existingUsuario.setVideojuegos(originalVideojuegos);
-
-            // Guardar el usuario actualizado
-            Usuario updatedUsuario = servicioUsuario.updateUsuario(existingUsuario, id);
-
-            return ResponseEntity.ok(updatedUsuario);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<Usuario> updateUsuario(@RequestBody Usuario usuario, @PathVariable int id) {
+        Usuario updatedUsuario = servicioUsuario.updateUsuario(usuario, id);
+        return ResponseEntity.ok(updatedUsuario);
     }
 
     @DeleteMapping("/{id}")
@@ -77,6 +59,7 @@ public class UsuarioController {
             @RequestParam(value = "nombre", required = false) String nombre,
             @RequestParam(value = "estatura", required = false) Double estatura,
             @RequestParam(value = "esPremium", required = false) Boolean esPremium) {
+
         if (id != null || nombre != null) {
             Optional<Usuario> resultado = servicioUsuario.buscarUsuario(id, nombre);
             return resultado
@@ -91,6 +74,7 @@ public class UsuarioController {
         }
     }
 
+
     private String formatMessage(BindingResult result){
         List<Map<String, String>> errores = result.getFieldErrors().stream()
                 .map(err -> {
@@ -98,10 +82,12 @@ public class UsuarioController {
                     error.put(err.getField(), err.getDefaultMessage());
                     return error;
                 }).collect(Collectors.toList());
+
         ErrorMessage errorMessage = ErrorMessage.builder()
                 .code("01")
                 .mensajes(errores)
                 .build();
+
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = "";
         try {
@@ -109,6 +95,7 @@ public class UsuarioController {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
         return jsonString;
     }
 }
