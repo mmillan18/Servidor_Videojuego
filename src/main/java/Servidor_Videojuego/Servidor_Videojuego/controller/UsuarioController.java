@@ -1,7 +1,6 @@
 package Servidor_Videojuego.Servidor_Videojuego.controller;
 
 import Servidor_Videojuego.Servidor_Videojuego.model.Usuario;
-import Servidor_Videojuego.Servidor_Videojuego.model.Videojuego;
 import Servidor_Videojuego.Servidor_Videojuego.services.ErrorMessage;
 import Servidor_Videojuego.Servidor_Videojuego.services.IServicioUsuario;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
