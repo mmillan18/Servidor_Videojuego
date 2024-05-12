@@ -37,7 +37,6 @@ ServicioUsuario implements IServicioUsuario {
         return usuarioRepository.save(usuario);
     }
 
-
     @Override
     public Usuario updateUsuario(Usuario usuario, int id) {
         if (usuario.getId() != id) {
@@ -56,10 +55,6 @@ ServicioUsuario implements IServicioUsuario {
                     return usuarioRepository.save(existingUsuario);
                 }).orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
     }
-
-
-
-
 
     @Override
     public boolean deleteUsuario(int id) {
@@ -82,7 +77,15 @@ ServicioUsuario implements IServicioUsuario {
 
     @Override
     public List<Usuario> getUsuarios(Double estatura, Boolean esPremium) {
-        return usuarioRepository.findByEstaturaAndEsPremium(estatura, esPremium);
+        if (estatura != null && esPremium != null) {
+            return usuarioRepository.findByEstaturaAndEsPremium(estatura, esPremium);
+        } else if (estatura != null) {
+            return usuarioRepository.findByEstatura(estatura);
+        } else if (esPremium != null) {
+            return usuarioRepository.findByEsPremium(esPremium);
+        } else {
+            return usuarioRepository.findAll();
+        }
     }
 
     @Override
