@@ -9,8 +9,6 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     // Buscar usuario por ID y nombre
     Optional<Usuario> findByIdAndNombre(Integer id, String nombre);
-    Optional<Usuario> findById(Integer id);
-    Optional<Usuario> findByNombre(String nombre);
 
     // Buscar usuarios por estatura y si es premium
     List<Usuario> findByEstaturaAndEsPremium(Double estatura, Boolean esPremium);
