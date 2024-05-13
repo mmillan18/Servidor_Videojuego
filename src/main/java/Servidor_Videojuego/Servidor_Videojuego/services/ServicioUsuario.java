@@ -86,6 +86,11 @@ ServicioUsuario implements IServicioUsuario {
     }
 
     @Override
+    public Optional<Usuario> buscarUserId(Integer id) {
+        return usuarioRepository.findById(id);
+    }
+
+    @Override
     public boolean existeUsuarioConId(int id) {
         return usuarioRepository.existsById(id);
     }

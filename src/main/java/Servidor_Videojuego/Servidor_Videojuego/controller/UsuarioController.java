@@ -71,6 +71,18 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUsuario(@PathVariable Integer id){
+        if(id != null){
+            Optional<Usuario> resultado = servicioUsuario.buscarUserId(id);
+            return resultado
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } else {
+            List<Usuario> usuarios = servicioUsuario.getUsuarios();
+            return new ResponseEntity<>(usuarios, HttpStatus.OK);
+        }
+    }
 
     private String formatMessage(BindingResult result){
         List<Map<String, String>> errores = result.getFieldErrors().stream()
