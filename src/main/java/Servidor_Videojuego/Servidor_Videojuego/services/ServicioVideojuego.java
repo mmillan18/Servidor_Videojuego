@@ -30,7 +30,7 @@ public class ServicioVideojuego implements IServicioVideojuego {
     }
 
     public Videojuego addUserToVideojuego(int usuarioId, Videojuego videojuego) {
-        Usuario usuario = servicioUsuario.buscarUsuario(usuarioId, null)
+        Usuario usuario = servicioUsuario.buscarUserId(usuarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
 
         if (videoJuegoRepository.existsById(videojuego.getId())) {

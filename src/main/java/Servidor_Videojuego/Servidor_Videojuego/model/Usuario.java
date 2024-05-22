@@ -1,5 +1,6 @@
 package Servidor_Videojuego.Servidor_Videojuego.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jdk.jfr.Name;
 import lombok.AllArgsConstructor;
@@ -32,5 +33,6 @@ public class Usuario {
     private boolean esPremium;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Videojuego> videojuegos;
 }

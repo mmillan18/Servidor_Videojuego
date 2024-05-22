@@ -1,5 +1,6 @@
 package Servidor_Videojuego.Servidor_Videojuego.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +33,7 @@ public class Videojuego {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
+    @JsonBackReference
     private Usuario usuario; // Referencia al objeto Usuario completo
 
 }
