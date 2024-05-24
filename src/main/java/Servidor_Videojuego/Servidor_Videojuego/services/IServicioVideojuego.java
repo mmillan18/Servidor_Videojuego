@@ -11,11 +11,12 @@ public interface IServicioVideojuego {
     Videojuego addUserToVideojuego(int usuarioId, Videojuego videojuego);
     Videojuego updateVideojuego(Videojuego videojuego, int usuarioId, int id);
     boolean deleteVideojuego(int usuarioId, int id);
-    Optional<Videojuego> buscarVideojuegos(Integer id, String nombre);
-    List<Videojuego> getVideojuegosDeUsuario(int usuarioId);
-    Usuario getUsuarioDeVideojuego(int id);
     List<Videojuego> getVideojuego();
-    List<Videojuego> getVideojuego(Double precio, Boolean multijugador);
-    boolean existeVideojuegoConId(int id);
+    List<Videojuego> getVideojuegosDeUsuario(int usuarioId);
+
+    Optional<Videojuego> getVideojuegoByUsuarioIdAndVideojuegoId(int usuarioId, int id);
+
+    List<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio, Boolean multijugador);
+
 }
 

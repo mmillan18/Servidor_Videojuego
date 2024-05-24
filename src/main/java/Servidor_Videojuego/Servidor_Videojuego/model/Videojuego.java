@@ -1,6 +1,7 @@
 package Servidor_Videojuego.Servidor_Videojuego.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,4 +37,8 @@ public class Videojuego {
     @JsonBackReference
     private Usuario usuario; // Referencia al objeto Usuario completo
 
+    @JsonGetter("usuario_id")
+    public int getUsuarioId() {
+        return usuario != null ? usuario.getId() : null;
+    }
 }
