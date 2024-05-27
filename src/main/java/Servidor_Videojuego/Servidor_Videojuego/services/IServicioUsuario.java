@@ -16,6 +16,7 @@ public interface IServicioUsuario {
     Optional<Usuario> buscarUsuario(Integer id, String nombre);
     List<Usuario> getUsuarios();
     List<Usuario> getUsuarios(Double estatura, Boolean esPremium);
+    Optional<Usuario> getUsuario(Integer id);
     Optional<Usuario> buscarUserId(Integer id);
     boolean existeUsuarioConId(int id);
 }

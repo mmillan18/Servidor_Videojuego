@@ -58,7 +58,7 @@ public class UsuarioController {
             @RequestParam(value = "esPremium", required = false) Boolean esPremium) {
 
         if (id != null || nombre != null) {
-            Optional<Usuario> resultado = servicioUsuario.buscarUsuario(id, nombre);
+            Optional<Usuario> resultado = servicioUsuario.getUsuario(id);
             return resultado
                     .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.notFound().build());

@@ -13,9 +13,7 @@ public interface IServicioVideojuego {
     boolean deleteVideojuego(int usuarioId, int id);
     List<Videojuego> getVideojuego();
     List<Videojuego> getVideojuegosDeUsuario(int usuarioId);
-
     Optional<Videojuego> getVideojuegoByUsuarioIdAndVideojuegoId(int usuarioId, int id);
-
     List<Videojuego> buscarVideojuegos(Integer id, String nombre, Double precio, Boolean multijugador);
 
 }
